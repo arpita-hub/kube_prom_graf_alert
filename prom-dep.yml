@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image: vimal13/prometheus
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/prometheus
+        - name: data
+          mountPath: /prometheus
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: config-volume
+        configMap:
+          name: prometheus-cm
+      - name: data
+        persistentVolumeClaim:
+          claimName: prometheus-pvc
+
